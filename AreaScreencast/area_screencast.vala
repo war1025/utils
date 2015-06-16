@@ -52,6 +52,8 @@ public class AreaScreencast : Object {
 
    private GLib.HashTable<string, GLib.Variant> options;
 
+   private bool recording;
+
    public AreaScreencast() {
       Bus.watch_name(BusType.SESSION, GnomeScreencast.BUS_NAME, BusNameWatcherFlags.NONE,
                      (connection, name, owner) => {
@@ -68,6 +70,8 @@ public class AreaScreencast : Object {
                      });
 
       options = new GLib.HashTable<string, GLib.Variant>(null, null);
+
+      recording = false;
 
    }
 
@@ -93,6 +97,8 @@ public class AreaScreencast : Object {
       screencast.screencast_area(x, y, width, height, "Screencast from %d %t.webm", this.options,
                                  out success, out filenameUsed);
 
+      this.recording = success;
+
       stderr.printf("Started screencast\n");
    }
 
@@ -106,6 +112,21 @@ public class AreaScreencast : Object {
       screencast.stop_screencast(out success);
 
       stderr.printf("Stopped screencast\n");
+
+      this.recording = false;
+   }
+
+   public void toggle_screencast(out bool recording) {
+      bool success;
+      string filename;
+
+      if (this.recording) {
+         this.stop_screencast(out success);
+      } else {
+         this.start_screencast(out success, out filename);
+      }
+
+      recording = this.recording;
    }
 
 }
