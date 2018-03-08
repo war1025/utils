@@ -71,6 +71,8 @@ public class AreaScreencast : Object {
 
       options = new GLib.HashTable<string, GLib.Variant>(null, null);
 
+      options["pipeline"] = "vp8enc min_quantizer=13 max_quantizer=13 cpu-used=5 deadline=1000000 threads=%T ! queue ! webmmux";
+
       recording = false;
 
    }
