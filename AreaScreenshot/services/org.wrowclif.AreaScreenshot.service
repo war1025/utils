@@ -1,0 +1,4 @@
+
+[D-BUS Service]
+Name=org.wrowclif.AreaScreenshot
+Exec=~/.local/share/utils/bin/area_screenshot
