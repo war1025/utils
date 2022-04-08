@@ -47,27 +47,11 @@ public class AreaScreencast : Object {
    public static const string BUS_NAME    = "org.wrowclif.AreaScreencast";
    public static const string OBJECT_PATH = "/org/wrowclif/AreaScreencast";
 
-   private GnomeScreencast screencast;
-   private GnomeScreenshot screenshot;
-
    private GLib.HashTable<string, GLib.Variant> options;
 
    private bool recording;
 
    public AreaScreencast() {
-      Bus.watch_name(BusType.SESSION, GnomeScreencast.BUS_NAME, BusNameWatcherFlags.NONE,
-                     (connection, name, owner) => {
-                        screencast = Bus.get_proxy_sync(BusType.SESSION,
-                                                        GnomeScreencast.BUS_NAME,
-                                                        GnomeScreencast.OBJECT_PATH);
-                     });
-
-      Bus.watch_name(BusType.SESSION, GnomeScreenshot.BUS_NAME, BusNameWatcherFlags.NONE,
-                     (connection, name, owner) => {
-                        screenshot = Bus.get_proxy_sync(BusType.SESSION,
-                                                        GnomeScreenshot.BUS_NAME,
-                                                        GnomeScreenshot.OBJECT_PATH);
-                     });
 
       options = new GLib.HashTable<string, GLib.Variant>(null, null);
 
@@ -81,9 +65,6 @@ public class AreaScreencast : Object {
       success = false;
       filenameUsed = null;
 
-      if (screencast == null || screenshot == null) {
-         return;
-      }
 
       int32 x;
       int32 y;
@@ -92,9 +73,17 @@ public class AreaScreencast : Object {
 
       stderr.printf("Starting screencast\n");
 
+      GnomeScreenshot screenshot = Bus.get_proxy_sync(BusType.SESSION,
+                                                        GnomeScreenshot.BUS_NAME,
+                                                        GnomeScreenshot.OBJECT_PATH);
+
       screenshot.select_area(out x, out y, out width, out height);
 
       stderr.printf("Got area\n");
+
+      GnomeScreencast screencast = Bus.get_proxy_sync(BusType.SESSION,
+                                      GnomeScreencast.BUS_NAME,
+                                      GnomeScreencast.OBJECT_PATH);
 
       screencast.screencast_area(x, y, width, height, "Screencast from %d %t.webm", this.options,
                                  out success, out filenameUsed);
@@ -107,9 +96,9 @@ public class AreaScreencast : Object {
    public void stop_screencast(out bool success) {
       success = false;
 
-      if (screencast == null) {
-         return;
-      }
+      GnomeScreencast screencast = Bus.get_proxy_sync(BusType.SESSION,
+                                      GnomeScreencast.BUS_NAME,
+                                      GnomeScreencast.OBJECT_PATH);
 
       screencast.stop_screencast(out success);
 

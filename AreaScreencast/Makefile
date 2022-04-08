@@ -14,3 +14,7 @@ install : area_screencast
 	find ./temp_services -type f | xargs sed -i -e "s,~,$(HOME),g"
 	cp ./temp_services/* ~/.local/share/dbus-1/services/
 	rm -r ./temp_services
+
+install-shell-extension: shell-extension/metadata.json shell-extension/extension.js
+	mkdir -p ~/.local/share/gnome-shell/extensions/area-screencast@wrowclif.org
+	cp ./shell-extension/* ~/.local/share/gnome-shell/extensions/area-screencast@wrowclif.org/
