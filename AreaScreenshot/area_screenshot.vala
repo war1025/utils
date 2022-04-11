@@ -59,7 +59,7 @@ public class AreaScreenshot : Object {
 
       stderr.printf("Got area\n");
 
-      var filename = new DateTime.now().format("Screenshot from %F %H-%M-%S.webm");
+      var filename = new DateTime.now().format("Screenshot from %F %H-%M-%S");
 
       screenshot.screenshot_area(x, y, width, height, true, filename,
                                  out success, out filenameUsed);
